@@ -262,5 +262,6 @@ node_modules
 psd
 thumb
 sketch
-
+*.csv
+*.txt
 # End of https://www.toptal.com/developers/gitignore/api/react,python,node
