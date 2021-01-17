@@ -1,5 +1,6 @@
 import pandas as pd
 df = pd.read_csv("./data.csv")
+print(df)
 df = df.drop(["tweet_id","author"], axis=1)
 df = df.rename(columns={"sentiment":"label"})
 df = df.replace({"label":["boredom","empty","worry"]}, "sadness")

@@ -181,7 +181,6 @@ class ModelBaseClass(nn.Module, ABC):
         self.optimizer().step()
         return loss.item()
 
-    @use_gpu(available=True)
     def update(self, data, targets, batch_size=50, epochs=100):
         self.train()
         total_loss = 0
@@ -249,7 +248,7 @@ class LSTM(ModelBaseClass):
 
     def optimizer(self):
         return self.adam
-    @use_gpu(available=True)
+
     def forward(self, data):
         # Convert input to tensor if not already a tensor
         embedding = self.embedding(data)
@@ -269,51 +268,52 @@ class LSTM(ModelBaseClass):
                            self.hidden_size,
                            device=self.device)
 
-    def save(self, path):
+    def save(self, path, *args, **kwargs):
         torch.save(self.state_dict(), path)
 
-    def load(self, path):
-        self.load_state_dict(torch.load(path))
+    def load(self, path, *args, **kwargs):
+        self.load_state_dict(torch.load(path, **kwargs))
         self.eval()
 
     def __call__(self, data):
         predictions = self.forward(data)
         return predictions
 
-print(torch.cuda.is_available())
-print(torch.cuda.device_count())
-for i in range(torch.cuda.device_count()):
-  print(torch.cuda.get_device_name(i))
-print(torch.cuda.get_device_name(torch.device('cuda')))
-device = torch.device('cuda')
-
-data = pd.read_csv("./data/data.csv")
-labels = data[['label']].values
-contents = data[['content']].values.reshape(-1)
-contents = [filter_text(content) for content in contents]
-vocab = get_vocab(contents)
-vocab_map, weights = get_weights("./data/glove.6B.50d.txt", vocab, add_zero=True)
-weights = torch.from_numpy(weights)
-contents = encode_documents(contents, vocab_map)
-contents = [torch.Tensor(content) for content in contents]
-contents = pad_sequence(contents,
-                        batch_first=True,
-                        padding_value=len(weights)-1).long()
-
-model = LSTM(weights, int(max(labels.reshape(-1))+1), device=torch.device("cuda"), hidden_size=256)
-labels = torch.from_numpy(labels.reshape(-1)).long()
-print(labels)
-print(contents.size())
-print(labels.size())
-total_loss = model.update(contents, labels, epochs=100)
-print("Final Loss:", total_loss)
-
-model.save("./models/model.pt")
-
-sentence = "my gf loves me"
-data = [sentence.split(" ")]
-data = encode_documents(data, vocab_map)
-print(data)
-data = torch.Tensor(data).long()
-model.eval()
-print(torch.argmax(model(data)))
+if __name__ == "__main__":
+    print(torch.cuda.is_available())
+    print(torch.cuda.device_count())
+    for i in range(torch.cuda.device_count()):
+      print(torch.cuda.get_device_name(i))
+    print(torch.cuda.get_device_name(torch.device('cuda')))
+    device = torch.device('cuda')
+    
+    data = pd.read_csv("./data/data.csv")
+    labels = data[['label']].values
+    contents = data[['content']].values.reshape(-1)
+    contents = [filter_text(content) for content in contents]
+    vocab = get_vocab(contents)
+    vocab_map, weights = get_weights("./data/glove.6B.50d.txt", vocab, add_zero=True)
+    weights = torch.from_numpy(weights)
+    contents = encode_documents(contents, vocab_map)
+    contents = [torch.Tensor(content) for content in contents]
+    contents = pad_sequence(contents,
+                            batch_first=True,
+                            padding_value=len(weights)-1).long()
+    
+    model = LSTM(weights, int(max(labels.reshape(-1))+1), device=torch.device("cuda"), hidden_size=256)
+    labels = torch.from_numpy(labels.reshape(-1)).long()
+    print(labels)
+    print(contents.size())
+    print(labels.size())
+    total_loss = model.update(contents, labels, epochs=100)
+    print("Final Loss:", total_loss)
+    
+    model.save("./models/model.pt")
+    
+    sentence = "my gf loves me"
+    data = [sentence.split(" ")]
+    data = encode_documents(data, vocab_map)
+    print(data)
+    data = torch.Tensor(data).long()
+    model.eval()
+    print(torch.argmax(model(data)))

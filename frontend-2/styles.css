@@ -1,0 +1,38 @@
+body {
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	background-color:orange;
+	background-image: linear-gradient(to right, rgba(204,204,255,1), rgba(255,182,193,1));
+}
+
+#box{
+	display:flex;
+	flex-wrap:wrap;
+	width:600px;
+	height:900px;
+	border-radius:10%;
+	background-color:rgba(255,255,255,0.5);
+	justify-content:flex-end;
+	align-content:center;
+}
+.chatbubble-user{
+	background-color:#ffffff;
+	height:100px;
+	width:300px;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	border-radius:50px 50px;
+	margin-right:50px;
+}
+.chatbubble-bot{
+	background-color:rgb(255,182,193);
+	height:100px;
+	width:300px;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	border-radius:50px 50px;
+	margin-right:200px;
+}
