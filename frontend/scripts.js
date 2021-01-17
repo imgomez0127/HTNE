@@ -64,7 +64,7 @@ input_form.addEventListener("submit", async (e) => {
         let link = document.createElement("a");
         link.class = "unstyled-link"
         link.href = song;
-        link.innerText = song;
+        link.innerText = "playlist";
         response_tag.append(link)
         parent.append(response_tag)
         emotion = null;
