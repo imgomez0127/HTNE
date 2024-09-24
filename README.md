@@ -8,5 +8,5 @@ try and cheer up the user.
 Utilized GloVe embeddings as a form of pre-training so that our model would generalize better by learning the 
 vector similarities that exist within word embeddings
 
-##Proof
+## Proof
 This is to prove my identity based on the email thread so that my account an be deleted.
